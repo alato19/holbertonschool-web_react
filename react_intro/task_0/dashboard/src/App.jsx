@@ -8,7 +8,6 @@ function App() {
   return (
     <div>
       <div className="App-header">
-        {/* Use an import for local assets in React */}
         <img src={holbertonLogo} alt="Holberton logo" />
         <h1 style={{ color: "#e1003c" }}>School dashboard</h1>
       </div>
