@@ -1,11 +1,16 @@
 import { useState } from "react";
 import "./App.css";
 import holbertonLogo from "./assets/holberton-logo.jpg";
+import { getCurrentYear, getFooterCopy } from "./utils";
+import Notifications from "./Notifications";
 
 function App() {
   
   return (
     <>
+      <div className="root-notifications">
+        <Notifications />
+      </div>
       <div className="App-header">
         <img src={holbertonLogo} alt="holberton logo"></img>
         <h1 style={{ color: "#e1003c" }}>School Dashboard</h1>
@@ -14,7 +19,7 @@ function App() {
         <p>Login to access the full dashboard</p>
       </div>
       <div className="App-footer">
-        <p>Copyright 2025 - holberton School</p>
+        <p>Copyright {getCurrentYear()} - {getFooterCopy(true)}</p>
       </div>
     </>
   );
