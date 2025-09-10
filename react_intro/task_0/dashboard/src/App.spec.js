@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
-import { expect, test } from '@jest/globals';
 
 test("renders 'School Dashboard' h1 element", () => {
     render(<App />);
