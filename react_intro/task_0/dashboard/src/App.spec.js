@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import App from "./App";
+import { expect, test } from '@jest/globals';
 
 test("renders 'School Dashboard' h1 element", () => {
     render(<App />);
@@ -11,5 +12,4 @@ test("renders 'School Dashboard' h1 element", () => {
     expect(footerText).toBeInTheDocument();
     const imgElement = screen.getByRole("img");
     expect(imgElement).toBeInTheDocument();
-  }
-);
+  });
