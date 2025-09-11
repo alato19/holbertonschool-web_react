@@ -1,0 +1,78 @@
+/* src/App.css */
+:root {
+  --pad: 14px;
+  --radius: 14px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: #f6f7fb;
+}
+.app-wrap {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+}
+h1 {
+  margin: 0 0 16px;
+  font-size: 24px;
+}
+.label {
+  display: block;
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #333;
+  font-weight: 600;
+}
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+}
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0;
+}
+.btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.btn {
+  background: #1f6feb;
+  color: white;
+  font-weight: 700;
+}
+.btn:hover {
+  filter: brightness(1.05);
+}
+.error {
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fee;
+  color: #900;
+}
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #666;
+}
