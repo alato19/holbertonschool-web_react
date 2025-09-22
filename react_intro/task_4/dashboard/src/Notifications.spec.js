@@ -1,31 +1,31 @@
 import { render, screen, fireEvent } from "@testing-library/react";
-import Notifications from "./Notifications";
+import Notifications from "./Notifications.jsx";
 
-describe("Notifications component", () => {
-    test("renders the notifications title", () => {
-        render(<Notifications />);
-        const title = screen.getByText(/here is the list of notifications/i)
-        expect(title).toBeInTheDocument();
-    });
+test("Notifications.jsx test", () => {
+    render(<Notifications />);
 
-    test("renders a close button", () => {
-        render(<Notifications />);
-        const button = screen.getByRole("button", { name: /close/i });
-        expect(button).toBeInTheDocument();
-    });
+    // 1. Titulli
+    const notificationTitle = screen.getByText("Here is the list of notifications");
+    expect(notificationTitle).toBeInTheDocument();
 
-    test("renders 3 list items", () => {
-        render(<Notifications />);
-        const listItems = screen.getAllByRole("listitem");
-        expect(listItems).toHaveLength(3);
-    });
+    // 2. Butoni Close
+    const closeButton = screen.getByRole("button", { name: "Close" });
+    expect(closeButton).toBeInTheDocument();
 
-    test("clicking the close button logs to console", () => {
-        const logSpy = jest.spyOn(console, "log").mockImplementation(() => { });
-        render(<Notifications />);
-        const button = screen.getByRole("button", { name: /close/i });
-        fireEvent.click(button);
-        expect(logSpy).toHaveBeenCalledWith("Close button has been clicked");
-        logSpy.mockRestore();
-    });
+    // 3. 3 li elements
+    const listItems = screen.getAllByRole("listitem");
+    expect(listItems).toHaveLength(3);
+
+    // 4. Spy për console.log
+    const consoleSpy = jest.spyOn(console, "log").mockImplementation(() => { });
+
+    // 5. Klikimi i butonit Close
+    fireEvent.click(closeButton);
+    expect(consoleSpy).toHaveBeenCalledWith("Close button has been clicked");
+
+    // 6. Pastrimi i spy
+    consoleSpy.mockRestore();
+
+    console.log("OK");
 });
+console.log("OK");

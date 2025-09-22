@@ -1,1 +1,1 @@
-https://alato19.github.io/holbertonschool-web_react
+https://andi-hbtn.github.io/holbertonschool-web_react
