@@ -1,25 +1,39 @@
-import Login from './Login';
-import { shallow } from 'enzyme';
+import React from "react";
+import { shallow, mount } from "enzyme";
+import Login from "./Login";
 
-describe('Testing <Login /> component', () => {
-    describe('Login renders without crashing', () => {
-        it ('should render Login withour crashing', () => {
-            const wrapper = shallow(<Login />);
-            expect(wrapper.exists()).toEqual(true);
-        });
-    });
-    describe('Login renders an input element', () => {
-        it ('should render an input in Login component', () => {
-            const wrapper = shallow(<Login />);
-            wrapper.update();
-            expect(wrapper.find('input')).toHaveLength(2);
-        });
-    });
-    describe('Header renders a label element', () => {
-        it ('should render a label in Header component', () => {
-            const wrapper = shallow(<Header />);
-            wrapper.update();
-            expect(wrapper.find('label')).toHaveLength(2);
-        });
-    });
+describe("Testing <Login /> component", () => {
+  it("renders without crashing", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.exists()).toEqual(true);
+  });
+
+  it("renders 2 input elements", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.find("input")).toHaveLength(2);
+  });
+
+  it("renders 2 label elements", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.find("label")).toHaveLength(2);
+  });
+
+  it("renders 1 button element", () => {
+    const wrapper = shallow(<Login />);
+    expect(wrapper.find("button")).toHaveLength(1);
+  });
+
+  it("focuses input when its label is clicked", () => {
+    const wrapper = mount(<Login />);
+    const emailLabel = wrapper.find("label").at(0); // first label
+    const emailInput = wrapper.find("input").at(0);
+
+    // simulate clicking the label
+    emailLabel.simulate("click");
+
+    // now check focus
+    expect(document.activeElement).toEqual(emailInput.getDOMNode());
+
+    wrapper.unmount();
+  });
 });
