@@ -10,14 +10,7 @@ import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBot
 import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
-function App() {
-  // User state management
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-    isLoggedIn: false,
-  });
-
+function App({ isLoggedIn, logOut }) {
   // Drawer state management
   const [displayDrawer, setDisplayDrawer] = useState(false);
 
@@ -27,16 +20,6 @@ function App() {
     { id: 2, type: "urgent", value: "New resume available" },
     { id: 3, type: "urgent", html: getLatestNotification() },
   ]);
-
-  // Login function - uses setter, does not mutate state
-  const logIn = useCallback((email, password) => {
-    setUser({ email, password, isLoggedIn: true });
-  }, []);
-
-  // Logout function - uses setter, does not mutate state
-  const logOut = useCallback(() => {
-    setUser({ email: "", password: "", isLoggedIn: false });
-  }, []);
 
   // Drawer handlers with stable references
   const handleDisplayDrawer = useCallback(() => {
@@ -81,14 +64,14 @@ function App() {
       />
       <div className={css(styles.body)}>
         <Header logOut={logOut} />
-        {user.isLoggedIn ? (
+        {isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
             <CourseList listCourses={listCourses} />
           </BodySectionWithMarginBottom>
         ) : (
           <div className={css(styles.login)}>
             <BodySectionWithMarginBottom title="Log in to continue">
-              <Login logIn={logIn} />
+              <Login />
             </BodySectionWithMarginBottom>
           </div>
         )}
@@ -129,13 +112,15 @@ const styles = StyleSheet.create({
   },
 });
 
-// PropTypes validation to catch wrong prop data types
+// PropTypes validation
 App.propTypes = {
-  // No props needed since we manage state internally
+  isLoggedIn: PropTypes.bool,
+  logOut: PropTypes.func,
 };
 
 App.defaultProps = {
-  // No default props needed
+  isLoggedIn: false,
+  logOut: () => {},
 };
 
 const listCourses = [
