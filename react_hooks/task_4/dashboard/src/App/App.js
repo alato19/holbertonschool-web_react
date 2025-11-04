@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useContext, useCallback } from "react";
 import PropTypes from "prop-types";
 import Notification from "../Notifications/Notifications";
@@ -11,35 +12,30 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 import AppContext from "../App/AppContext";
 
-function App({ isLoggedIn }) {
-  // ✅ Context user (initially from context)
+function App({ isLoggedIn, logOut }) {
+  // ✅ context user
   const context = useContext(AppContext);
   const [user, setUser] = useState(context.user);
 
-  // ✅ Drawer visibility (initially true as per requirement)
+  // ✅ state hooks
   const [displayDrawer, setDisplayDrawer] = useState(false);
-
-  // ✅ Notifications list state
   const [notifications, setNotifications] = useState(listNotifications);
 
-  // ✅ Handlers (memoized to prevent unnecessary re-renders)
+  // ✅ handlers (memoized)
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
-  // ✅ Log in/out handlers (functional style)
   const logIn = useCallback((email, password) => {
     setUser({ email, password, isLoggedIn: true });
   }, []);
 
-  const logOut = useCallback(() => {
+  const handleLogOut = useCallback(() => {
     setUser({ email: "", password: "", isLoggedIn: false });
-  }, []);
+    logOut(); // 👈 test expects this call
+  }, [logOut]);
 
-  // ✅ Mark notification as read
   const markNotificationAsRead = useCallback((id) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((notif) => notif.id !== id)
-    );
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
   }, []);
 
   return (
@@ -51,7 +47,7 @@ function App({ isLoggedIn }) {
         displayDrawer={displayDrawer}
       />
       <div className={css(styles.body)}>
-        <Header />
+        <Header logOut={handleLogOut} /> {/* 👈 keep this */}
         {isLoggedIn || user?.isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
             <CourseList listCourses={listCourses} />
@@ -102,13 +98,15 @@ const styles = StyleSheet.create({
 
 App.propTypes = {
   isLoggedIn: PropTypes.bool,
+  logOut: PropTypes.func,
 };
 
 App.defaultProps = {
   isLoggedIn: false,
+  logOut: () => {},
 };
 
-// ✅ Static data (unchanged)
+// ✅ static lists
 const listCourses = [
   { id: 1, name: "ES6", credit: 60 },
   { id: 2, name: "Webpack", credit: 20 },
