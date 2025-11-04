@@ -1,3 +1,4 @@
+// App.js
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import Notifications from "../Notifications/Notifications";
@@ -11,42 +12,41 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
 function App({ isLoggedIn, logOut }) {
+  // ✅ Hook state replacing class state
   const [displayDrawer, setDisplayDrawer] = useState(true);
 
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
   return (
-    <React.Fragment>
+    <div className={css(styles.body)}>
       <Notifications
         listNotifications={listNotifications}
         handleDisplayDrawer={handleDisplayDrawer}
         handleHideDrawer={handleHideDrawer}
         displayDrawer={displayDrawer}
       />
-      <div className={css(styles.body)}>
-        <Header logOut={logOut} />
-        {isLoggedIn ? (
-          <BodySectionWithMarginBottom title="Course list">
-            <CourseList listCourses={listCourses} />
+      <Header logOut={logOut} />
+      {isLoggedIn ? (
+        <BodySectionWithMarginBottom title="Course list">
+          <CourseList listCourses={listCourses} />
+        </BodySectionWithMarginBottom>
+      ) : (
+        <div className={css(styles.login)}>
+          <BodySectionWithMarginBottom title="Log in to continue">
+            <Login />
           </BodySectionWithMarginBottom>
-        ) : (
-          <div className={css(styles.login)}>
-            <BodySectionWithMarginBottom title="Log in to continue">
-              <Login />
-            </BodySectionWithMarginBottom>
-          </div>
-        )}
-        <div className={css(styles.news)}>
-          <BodySection title="News from the School">
-            <p>Lorem ipsum hello world</p>
-          </BodySection>
         </div>
-        <div className={css(styles.footer)}>
-          <Footer />
-        </div>
+      )}
+      <div className={css(styles.news)}>
+        <BodySection title="News from the School">
+          <p>Lorem ipsum hello world</p>
+        </BodySection>
       </div>
-    </React.Fragment>
+      <div className={css(styles.footer)}>
+        <Footer />
+      </div>
+    </div>
   );
 }
 
