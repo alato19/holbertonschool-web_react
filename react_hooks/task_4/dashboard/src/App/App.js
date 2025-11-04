@@ -1,5 +1,5 @@
 // App.js
-import React, { useState, useContext, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import Notification from "../Notifications/Notifications";
 import Header from "../Header/Header";
@@ -10,24 +10,14 @@ import { getLatestNotification } from "../utils/util";
 import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
 import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
-import AppContext from "../App/AppContext";
 
 function App({ isLoggedIn, logOut }) {
-  const context = useContext(AppContext);
-  const [user, setUser] = useState(context.user);
-  const [displayDrawer, setDisplayDrawer] = useState(true); // ✅ per test instruction
+  // ✅ convert state to hook
+  const [displayDrawer, setDisplayDrawer] = useState(true);
 
+  // ✅ equivalent handlers (memoized)
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
-
-  const logIn = useCallback((email, password) => {
-    setUser({ email, password, isLoggedIn: true });
-  }, []);
-
-  const handleLogOut = useCallback(() => {
-    setUser({ email: "", password: "", isLoggedIn: false });
-    logOut();
-  }, [logOut]);
 
   return (
     <>
@@ -38,15 +28,15 @@ function App({ isLoggedIn, logOut }) {
         displayDrawer={displayDrawer}
       />
       <div className={css(styles.body)}>
-        <Header logOut={handleLogOut} />
-        {isLoggedIn || user?.isLoggedIn ? (
+        <Header logOut={logOut} />
+        {isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
             <CourseList listCourses={listCourses} />
           </BodySectionWithMarginBottom>
         ) : (
           <div className={css(styles.login)}>
             <BodySectionWithMarginBottom title="Log in to continue">
-              <Login logIn={logIn} />
+              <Login />
             </BodySectionWithMarginBottom>
           </div>
         )}
