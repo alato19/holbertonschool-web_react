@@ -1,4 +1,3 @@
-// App.js
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import Notifications from "../Notifications/Notifications";
@@ -12,14 +11,13 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
 function App({ isLoggedIn, logOut }) {
-  // ✅ Functional state conversion
   const [displayDrawer, setDisplayDrawer] = useState(true);
 
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
   return (
-    <>
+    <React.Fragment>
       <Notifications
         listNotifications={listNotifications}
         handleDisplayDrawer={handleDisplayDrawer}
@@ -48,7 +46,7 @@ function App({ isLoggedIn, logOut }) {
           <Footer />
         </div>
       </div>
-    </>
+    </React.Fragment>
   );
 }
 
