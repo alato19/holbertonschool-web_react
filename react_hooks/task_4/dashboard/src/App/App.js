@@ -1,7 +1,7 @@
 // App.js
 import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
-import Notification from "../Notifications/Notifications";
+import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
 import Login from "../Login/Login";
 import Footer from "../Footer/Footer";
@@ -12,16 +12,15 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
 function App({ isLoggedIn, logOut }) {
-  // ✅ convert state to hook
+  // ✅ Functional state conversion
   const [displayDrawer, setDisplayDrawer] = useState(true);
 
-  // ✅ equivalent handlers (memoized)
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
   return (
     <>
-      <Notification
+      <Notifications
         listNotifications={listNotifications}
         handleDisplayDrawer={handleDisplayDrawer}
         handleHideDrawer={handleHideDrawer}
