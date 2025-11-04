@@ -17,7 +17,7 @@ function App({ isLoggedIn }) {
   const [user, setUser] = useState(context.user);
 
   // ✅ Drawer visibility (initially true as per requirement)
-  const [displayDrawer, setDisplayDrawer] = useState(true);
+  const [displayDrawer, setDisplayDrawer] = useState(false);
 
   // ✅ Notifications list state
   const [notifications, setNotifications] = useState(listNotifications);
