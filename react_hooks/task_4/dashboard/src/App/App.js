@@ -13,15 +13,10 @@ import { StyleSheet, css } from "aphrodite";
 import AppContext from "../App/AppContext";
 
 function App({ isLoggedIn, logOut }) {
-  // ✅ context user
   const context = useContext(AppContext);
   const [user, setUser] = useState(context.user);
+  const [displayDrawer, setDisplayDrawer] = useState(true); // ✅ per test instruction
 
-  // ✅ state hooks
-  const [displayDrawer, setDisplayDrawer] = useState(false);
-  const [notifications, setNotifications] = useState(listNotifications);
-
-  // ✅ handlers (memoized)
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
@@ -31,23 +26,19 @@ function App({ isLoggedIn, logOut }) {
 
   const handleLogOut = useCallback(() => {
     setUser({ email: "", password: "", isLoggedIn: false });
-    logOut(); // 👈 test expects this call
+    logOut();
   }, [logOut]);
-
-  const markNotificationAsRead = useCallback((id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
-  }, []);
 
   return (
     <>
       <Notification
-        listNotifications={notifications}
+        listNotifications={listNotifications}
         handleDisplayDrawer={handleDisplayDrawer}
         handleHideDrawer={handleHideDrawer}
         displayDrawer={displayDrawer}
       />
       <div className={css(styles.body)}>
-        <Header logOut={handleLogOut} /> {/* 👈 keep this */}
+        <Header logOut={handleLogOut} />
         {isLoggedIn || user?.isLoggedIn ? (
           <BodySectionWithMarginBottom title="Course list">
             <CourseList listCourses={listCourses} />
@@ -106,7 +97,6 @@ App.defaultProps = {
   logOut: () => {},
 };
 
-// ✅ static lists
 const listCourses = [
   { id: 1, name: "ES6", credit: 60 },
   { id: 2, name: "Webpack", credit: 20 },
