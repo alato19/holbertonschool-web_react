@@ -1,127 +1,106 @@
-import { useEffect, useState, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import axios from "axios";
-import { StyleSheet, css } from "aphrodite";
 import Notifications from "../Notifications/Notifications";
-import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 import Login from "../Login/Login";
+import BodySection from "../BodySection/BodySection";
+import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
 import CourseList from "../CourseList/CourseList";
 import { getLatestNotification } from "../utils/utils";
-import BodySectionWithMarginBottom from "../BodySection/BodySectionWithMarginBottom";
-import BodySection from "../BodySection/BodySection";
-import newContext from "../Context/context";
+import { StyleSheet, css } from "aphrodite";
+import AppContext from "../Context/context";
 
-const API_BASE_URL = "http://localhost:5173";
-const ENDPOINTS = {
-  courses: `${API_BASE_URL}/courses.json`,
-  notifications: `${API_BASE_URL}/notifications.json`,
-};
-
-const styles = StyleSheet.create({
-  app: {
-    position: "relative",
-  },
-});
-
-export default function App() {
-  const [displayDrawer, setDisplayDrawer] = useState(true);
-  const [user, setUser] = useState({ ...newContext.user });
+const App = () => {
+  const [displayDrawer, setDisplayDrawer] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [courses, setCourses] = useState([]);
+  const [coursesList, setCoursesList] = useState([]);
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+    isLoggedIn: false,
+  });
 
+  const logIn = useCallback((email, password) => {
+    setUser({
+      email,
+      password,
+      isLoggedIn: true,
+    });
+  }, []);
+
+  const logOut = useCallback(() => {
+    setUser({
+      email: "",
+      password: "",
+      isLoggedIn: false,
+    });
+  }, []);
+
+  const markNotificationAsRead = useCallback((id) => {
+    console.log(`Notification ${id} has been marked as read`);
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  }, []);
+
+  const handleDisplayDrawer = () => setDisplayDrawer(true);
+  const handleHideDrawer = () => setDisplayDrawer(false);
+
+  // Fetch notifications on initial mount
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await axios.get(ENDPOINTS.notifications);
-        const latestNotif = {
-          id: 3,
-          type: "urgent",
-          html: { __html: getLatestNotification() },
-        };
-
-        const currentNotifications = response.data.notifications;
-        const indexToReplace = currentNotifications.findIndex(
-          (notification) => notification.id === 3
+        const res = await axios.get("/notifications.json");
+        const data = res.data.map((notif) =>
+          notif.id === 3
+            ? { ...notif, html: { __html: getLatestNotification() } }
+            : notif
         );
-
-        const updatedNotifications = [...currentNotifications];
-        if (indexToReplace !== -1) {
-          updatedNotifications[indexToReplace] = latestNotif;
-        } else {
-          updatedNotifications.push(latestNotif);
+        setNotifications(data);
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to fetch notifications:", err);
         }
-
-        setNotifications(updatedNotifications);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
       }
     };
 
     fetchNotifications();
   }, []);
 
+  // Fetch courses when user logs in or logs out
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(ENDPOINTS.courses);
-        setCourses(response.data.courses);
-      } catch (error) {
-        console.error("Error fetching courses:", error);
+        const res = await axios.get("/courses.json");
+        setCoursesList(res.data);
+      } catch (err) {
+        if (process.env.NODE_ENV === "development") {
+          console.error("Failed to fetch courses:", err);
+        }
       }
     };
 
-    if (!user.isLoggedIn) {
-      setCourses([]);
-      return;
-    }
-
     fetchCourses();
-  }, [user.isLoggedIn]);
-
-  const handleDisplayDrawer = useCallback(() => {
-    setDisplayDrawer(true);
-  }, []);
-
-  const handleHideDrawer = useCallback(() => {
-    setDisplayDrawer(false);
-  }, []);
-
-  const logIn = (email, password) => {
-    setUser({
-      email,
-      password,
-      isLoggedIn: true,
-    });
-  };
-
-  const logOut = () => {
-    setUser({
-      email: "",
-      password: "",
-      isLoggedIn: false,
-    });
-  };
-
-  const markNotificationAsRead = useCallback((id) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== id)
-    );
-    console.log(`Notification ${id} has been marked as read`);
-  }, []);
+  }, [user]);
 
   return (
-    <newContext.Provider value={{ user, logOut }}>
+    <AppContext.Provider value={{ user, logOut }}>
       <div className={css(styles.app)}>
-        <Notifications
-          notifications={notifications}
-          handleHideDrawer={handleHideDrawer}
-          handleDisplayDrawer={handleDisplayDrawer}
-          displayDrawer={displayDrawer}
-          markNotificationAsRead={markNotificationAsRead}
-        />
-        <>
-          <Header />
-          {!user.isLoggedIn ? (
+        <div className={css(styles.notifications)}>
+          <Notifications
+            notifications={notifications}
+            displayDrawer={displayDrawer}
+            handleDisplayDrawer={handleDisplayDrawer}
+            handleHideDrawer={handleHideDrawer}
+            markNotificationAsRead={markNotificationAsRead}
+          />
+        </div>
+        <Header />
+        <div className={css(styles.body)}>
+          {user.isLoggedIn ? (
+            <BodySectionWithMarginBottom title="Course list">
+              <CourseList courses={coursesList} />
+            </BodySectionWithMarginBottom>
+          ) : (
             <BodySectionWithMarginBottom title="Log in to continue">
               <Login
                 logIn={logIn}
@@ -129,17 +108,35 @@ export default function App() {
                 password={user.password}
               />
             </BodySectionWithMarginBottom>
-          ) : (
-            <BodySectionWithMarginBottom title="Course list">
-              <CourseList courses={courses} />
-            </BodySectionWithMarginBottom>
           )}
           <BodySection title="News from the School">
-            <p>Holberton School news goes here</p>
+            <p>Holberton School News goes here</p>
           </BodySection>
-        </>
+        </div>
         <Footer />
       </div>
-    </newContext.Provider>
+    </AppContext.Provider>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  app: {
+    margin: "0",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+  },
+  body: {
+    flex: "1",
+  },
+  notifications: {
+    display: "flex",
+    position: "absolute",
+    flexDirection: "column",
+    right: "0",
+    paddingRight: "1rem",
+    minWidth: "30rem",
+  },
+});
+
+export default App;
