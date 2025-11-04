@@ -11,24 +11,29 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
 function App({ isLoggedIn, logOut }) {
-  // ✅ Drawer starts hidden by default
   const [displayDrawer, setDisplayDrawer] = useState(false);
 
-  // ✅ Handlers
-  const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
-  const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
+  const handleDisplayDrawer = () => {
+    setDisplayDrawer(true);
+  };
 
-  // ✅ Keyboard event handler for Ctrl+h
+  const handleHideDrawer = () => {
+    setDisplayDrawer(false);
+  };
+
   useEffect(() => {
-    const handleKeyPress = (e) => {
-      if (e.ctrlKey && e.key === "h") {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && event.key === "h") {
         alert("Logging you out");
         logOut();
       }
     };
 
-    document.addEventListener("keydown", handleKeyPress);
-    return () => document.removeEventListener("keydown", handleKeyPress);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [logOut]);
 
   return (
