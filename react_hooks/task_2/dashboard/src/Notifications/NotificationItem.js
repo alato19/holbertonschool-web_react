@@ -1,5 +1,4 @@
-import React from "react";
-import { memo } from "react";
+import React, { memo } from "react";
 import PropTypes from "prop-types";
 import { StyleSheet, css } from "aphrodite";
 
@@ -10,29 +9,26 @@ const NotificationItem = memo(function NotificationItem({
   markAsRead,
   id,
 }) {
-  let list;
-
-  let typeStyle = css(
+  const typeStyle = css(
     type === "urgent" ? styles.urgent : styles.default,
     styles.mobile
   );
 
   if (value) {
-    list = (
+    return (
       <li className={typeStyle} onClick={() => markAsRead(id)}>
         {value}
       </li>
     );
-  } else {
-    list = (
-      <li
-        className={typeStyle}
-        dangerouslySetInnerHTML={{ __html: html }}
-        onClick={() => markAsRead(id)}
-      ></li>
-    );
   }
-  return list;
+
+  return (
+    <li
+      className={typeStyle}
+      dangerouslySetInnerHTML={html}
+      onClick={() => markAsRead(id)}
+    />
+  );
 });
 
 const styles = StyleSheet.create({
