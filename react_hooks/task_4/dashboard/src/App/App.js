@@ -1,5 +1,4 @@
-// App.js
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import PropTypes from "prop-types";
 import Notifications from "../Notifications/Notifications";
 import Header from "../Header/Header";
@@ -12,41 +11,57 @@ import BodySection from "../BodySection/BodySection";
 import { StyleSheet, css } from "aphrodite";
 
 function App({ isLoggedIn, logOut }) {
-  // ✅ Hook state replacing class state
-  const [displayDrawer, setDisplayDrawer] = useState(true);
+  // ✅ Drawer starts hidden by default
+  const [displayDrawer, setDisplayDrawer] = useState(false);
 
+  // ✅ Handlers
   const handleDisplayDrawer = useCallback(() => setDisplayDrawer(true), []);
   const handleHideDrawer = useCallback(() => setDisplayDrawer(false), []);
 
+  // ✅ Keyboard event handler for Ctrl+h
+  useEffect(() => {
+    const handleKeyPress = (e) => {
+      if (e.ctrlKey && e.key === "h") {
+        alert("Logging you out");
+        logOut();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyPress);
+    return () => document.removeEventListener("keydown", handleKeyPress);
+  }, [logOut]);
+
   return (
-    <div className={css(styles.body)}>
+    <React.Fragment>
       <Notifications
         listNotifications={listNotifications}
         handleDisplayDrawer={handleDisplayDrawer}
         handleHideDrawer={handleHideDrawer}
         displayDrawer={displayDrawer}
       />
-      <Header logOut={logOut} />
-      {isLoggedIn ? (
-        <BodySectionWithMarginBottom title="Course list">
-          <CourseList listCourses={listCourses} />
-        </BodySectionWithMarginBottom>
-      ) : (
-        <div className={css(styles.login)}>
-          <BodySectionWithMarginBottom title="Log in to continue">
-            <Login />
+      <div className={css(styles.body)}>
+        <Header logOut={logOut} />
+        {isLoggedIn ? (
+          <BodySectionWithMarginBottom title="Course list">
+            <CourseList listCourses={listCourses} />
           </BodySectionWithMarginBottom>
+        ) : (
+          <div className={css(styles.login)}>
+            <BodySectionWithMarginBottom title="Log in to continue">
+              <Login />
+            </BodySectionWithMarginBottom>
+          </div>
+        )}
+        <div className={css(styles.news)}>
+          <BodySection title="News from the School">
+            <p>Lorem ipsum hello world</p>
+          </BodySection>
         </div>
-      )}
-      <div className={css(styles.news)}>
-        <BodySection title="News from the School">
-          <p>Lorem ipsum hello world</p>
-        </BodySection>
+        <div className={css(styles.footer)}>
+          <Footer />
+        </div>
       </div>
-      <div className={css(styles.footer)}>
-        <Footer />
-      </div>
-    </div>
+    </React.Fragment>
   );
 }
 
